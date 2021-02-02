@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Text.Json;
+using System.Text;
 
 namespace ConsoleApp7
 {
@@ -9,10 +9,11 @@ namespace ConsoleApp7
         static void Main(string[] args)
         {
             string pathFolder = @"D:\Текущие документы\Дыбрын земля площадок";
+            string fileToWriteText = @"D:\Текущие документы\Файл для примера.txt";
 
             string[] AllSubFolders = GetAllFolder(pathFolder);
 
-            PrintFolderAndFiles(AllSubFolders);
+            PrintFolderAndFiles(AllSubFolders, fileToWriteText);
         }
 
         static string[] GetAllFolder(string startFolderPath)
@@ -25,7 +26,7 @@ namespace ConsoleApp7
             string[] pathsToFiles = Directory.GetFiles(folderPath);
 
             string[] nameFiles = new string[pathsToFiles.Length];
-            for (int i = 0; i< pathsToFiles.Length; i++)
+            for (int i = 0; i < pathsToFiles.Length; i++)
             {
                 nameFiles[i] = Path.GetFileName(pathsToFiles[i]);
             }
@@ -33,27 +34,31 @@ namespace ConsoleApp7
             return nameFiles;
         }
 
-        static void PrintFolderAndFiles(string[] AllFolders)
+        static void PrintFolderAndFiles(string[] AllFolders, string fileToWritePath)
         {
-            for(int i = 0; i < AllFolders.Length; i++)
+            for (int i = 0; i < AllFolders.Length; i++)
             {
                 if (AllFolders[i] == null) continue;
                 else
                 {
-                    Console.WriteLine($"Текущая папка {AllFolders[i]}");
                     string[] filesInFolder = GetFilesInFolder(AllFolders[i]);
+
+                    File.AppendAllText(fileToWritePath, $"Текущая папка {AllFolders[i]}", Encoding.UTF8);
 
                     if (filesInFolder.Length > 0)
                     {
-                        Console.WriteLine("Файлы в указанной папке:");
-                        Console.WriteLine();
-                        foreach (string str in filesInFolder) Console.WriteLine(str);
+                        File.AppendAllText(fileToWritePath, "Файлы в указанной папке: \n", Encoding.UTF8); ;
+
+                        foreach (string str in filesInFolder)
+                        {
+                            File.AppendAllText(fileToWritePath, $"{str} \n", Encoding.UTF8); ;
+                        }
+
                         Console.WriteLine();
                     }
                     else
                     {
-                        Console.WriteLine("В указанной папке нет файлов!");
-                        Console.WriteLine();
+                        File.AppendAllText(fileToWritePath, "В указанной папке нет файлов! \n", Encoding.UTF8);
                     }
                 }
             }
